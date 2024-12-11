@@ -15,6 +15,12 @@ esp-backtrace = { version = "0.14.0", features = [
 ] }
 esp-println = { version = "0.12.0", features = ["esp32"] }
 dht11 = "0.3.1"
+esp-idf-sys = "0.35.0"
+embedded-graphics = "0.8.1"  # For drawing primitives and text
+ssd1306 = "0.9.0"  # OLED driver library
+
+#https://docs.rs/embedded-hal/1.0.0-alpha.11/embedded_hal/i2c/index.html
+embedded-hal = "1.0.0"  # Hardware Abstraction Layer, not sure if needed
 
 [profile.dev]
 # Rust debug is too slow.
