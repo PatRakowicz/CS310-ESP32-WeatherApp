@@ -1,30 +1,35 @@
 #![no_std]
 #![no_main]
 
-use dht11::Dht11;
 use esp_backtrace as _;
+use esp_println::println;
 use esp_hal::{
+    clock::ClockControl,
     delay::Delay,
     gpio::{Io, Level, Output},
+    peripherals::Peripherals,
     prelude::*,
+    system::SystemControl,
 };
-use esp_hal::gpio::Input;
 
 #[entry]
 fn main() -> ! {
-    let peripherals = esp_hal::init({
-        let mut config = esp_hal::Config::default();
-        config.cpu_clock = CpuClock::max();
-        config
-    });
+    let peripherals = Peripherals::take();
+    let system = SystemControl::new(peripherals.SYSTEM);
+    let clocks = ClockControl::max(system.clock_control).freeze();
 
-    // Set GPIO0 as an output, and set its state high initially.
-    let mut led = Output::new(peripherals.GPIO4, Level::High);
+    // Set GPIO4 as an output, and set its state high initially.
+    let io = Io::new(peripherals.GPIO, peripherals.IO_MUX);
+    let mut led = Output::new(io.pins.gpio4, Level::High);
 
-    let delay = Delay::new();
+    led.set_high();
 
+    // Initialize the Delay peripheral, and use it to toggle the LED state in a
+    // loop.
+    let delay = Delay::new(&clocks);
+    println!("Hello world!");
     loop {
+        delay.delay_millis(1000);
         led.toggle();
-        delay.delay_millis(3000);
     }
 }
