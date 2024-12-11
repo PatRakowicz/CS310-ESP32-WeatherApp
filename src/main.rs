@@ -14,10 +14,9 @@ use embedded_graphics::{
     pixelcolor::BinaryColor,
     prelude::*,
     primitives::{Circle, PrimitiveStyle},
-    mono_font::{ascii::FONT_6X9, MonoTextStyleBuilder},
+    mono_font::{ascii::FONT_6X10, MonoTextStyleBuilder},
     text::Text,
 };
-use embedded_graphics::mono_font::ascii::FONT_6X10;
 use embedded_graphics::text::Baseline;
 use ssd1306::{mode::BufferedGraphicsMode, prelude::*, I2CDisplayInterface, Ssd1306};
 
@@ -29,8 +28,8 @@ fn main() -> ! {
         config
     });
 
-    // Set GPIO0 as an output, and set its state high initially.
     let mut led = Output::new(peripherals.GPIO4, Level::High);
+
 
     // Ic2 Display https://docs.rs/ssd1306/0.9.0/ssd1306/index.html
 
@@ -44,6 +43,7 @@ fn main() -> ! {
         DisplaySize128x64,
         DisplayRotation::Rotate0,
     ).into_buffered_graphics_mode();
+
     display.init().unwrap();
 
     let text_style = MonoTextStyleBuilder::new()
@@ -61,29 +61,10 @@ fn main() -> ! {
 
     display.flush().unwrap();
 
-    // DHT11 Sensor needs
-    // let dht11_pin = Flex::new(peripherals.GPIO0);
-    // let mut dht11 = Dht11::new(dht11_pin);
-    // let mut dht11_delay = Delay::new();
     let delay = Delay::new();
 
     loop {
         led.toggle();
         delay.delay_millis(1500);
-
-        // Attempted to run .perform_measurement not getting any data back
-        // could be possible due to the fact that the version of the dht11 crate. isn't working.
-        // match dht11.perform_measurement(&mut dht11_delay) {
-        //     Ok(sensor_data) => {
-        //         esp_println::println!(
-        //             "Temperature: {}°C, Humidity: {}%",
-        //             sensor_data.temperature,
-        //             sensor_data.humidity
-        //         );
-        //     }
-        //     Err(e) => {
-        //         esp_println::println!("Error reading from DHT11: {:?}", e);
-        //     }
-        // }
     }
 }
