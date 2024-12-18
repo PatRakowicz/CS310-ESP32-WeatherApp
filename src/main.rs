@@ -13,7 +13,7 @@ use esp_hal::{
 use embedded_graphics::{
     pixelcolor::BinaryColor,
     prelude::*,
-    primitives::{Circle, PrimitiveStyle},
+    primitives::{Circle, PrimitiveStyle, Rectangle},
     mono_font::{ascii::FONT_6X10, MonoTextStyleBuilder},
     text::Text,
 };
@@ -55,16 +55,32 @@ fn main() -> ! {
         .draw(&mut display)
         .unwrap();
 
-    Text::with_baseline("Hello Rust!", Point::new(0, 16), text_style, Baseline::Top)
+    Text::with_baseline("Hi Amy!", Point::new(0, 16), text_style, Baseline::Top)
         .draw(&mut display)
         .unwrap();
 
-    display.flush().unwrap();
-
+    let mut x_pos = 0;
     let delay = Delay::new();
 
     loop {
         led.toggle();
-        delay.delay_millis(1500);
+
+
+        Rectangle::new(Point::new(0, 0), Size::new(128, 64))
+            .into_styled(PrimitiveStyle::with_fill(BinaryColor::Off))
+            .draw(&mut display)
+            .unwrap();
+
+        Text::with_baseline("Moving Text!", Point::new(x_pos, 32), text_style, Baseline::Top)
+            .draw(&mut display)
+            .unwrap();
+
+        let mut x_pos = 0;
+
+        x_pos += 4;
+        if x_pos > 128 {
+            x_pos = -64;
+        }
+        delay.delay_millis(200);
     }
 }
